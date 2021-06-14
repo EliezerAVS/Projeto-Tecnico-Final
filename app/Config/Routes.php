@@ -35,6 +35,8 @@ $routes->setAutoRoute(true);
 // $routes->get('/', 'Home::index');
 $routes->resource('cliente');
 
+$routes->resource('funcionario');
+
 $routes->resource('produtos');
 
 /*
