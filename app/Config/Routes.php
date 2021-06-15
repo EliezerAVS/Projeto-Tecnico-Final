@@ -37,7 +37,10 @@ $routes->resource('cliente');
 
 $routes->resource('funcionario');
 
-$routes->resource('produtos');
+$routes->resource('produto');
+
+$routes->resource('venda', ['placeholder' => '(:num)']);
+$routes->get('venda/venda', 'Venda::venda');
 
 /*
  * --------------------------------------------------------------------

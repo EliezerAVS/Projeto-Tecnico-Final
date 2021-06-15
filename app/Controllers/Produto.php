@@ -4,7 +4,7 @@ use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\API\ResponseTrait;
 use App\Models\ProdutoModel;
  
-class Produtos extends ResourceController
+class Produto extends ResourceController
 {
     use ResponseTrait;
     // lista todos produtos
@@ -88,5 +88,4 @@ class Produtos extends ResourceController
         
         return $this->failNotFound('Nenhum dado encontrado com id '.$id);
     }
- 
 }
