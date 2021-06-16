@@ -2,12 +2,70 @@
 
 namespace App\Controllers;
 
-use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\API\ResponseTrait;
 use App\Models\FuncionarioModel;
+use Firebase\JWT\JWT;
 
-class Funcionario extends ResourceController {
+class Funcionario extends BaseController {
 	use ResponseTrait; 
+
+	public function login(){
+		$userModel = new FuncionarioModel();
+
+		$userdata = $userModel->where("email", $this->request->getVar("email"))->first();
+
+		if (!empty($userdata)) {
+
+			$senha = hash('sha256', $this->request->getVar("senha"));
+
+			if ($senha == $userdata['senha']) {
+
+				$key = $this->getKey();
+
+				$iat = time(); // retorna em timestamp
+				$nbf = $iat + 1;
+				$exp = $iat + 36000;
+
+				$payload = array(
+					"iss" => "api_estoque",
+					"aud" => "front_end",
+					"iat" => $iat, // issued at
+					"nbf" => $nbf, //not before in seconds
+					"exp" => $exp, // expire time in seconds
+					"data" => $userdata,
+				);
+
+				$token = JWT::encode($payload, $key);
+
+				$response = [
+					'status' => 200,
+					'error' => false,
+					'messages' => 'Usuário logado com sucesso',
+					'data' => [
+						'token' => $token
+					]
+				];
+				return $this->respondCreated($response);
+			} else {
+
+				$response = [
+				'status' => 500,
+				'error' => true,
+				'messages' => 'Login inválido',
+				'data' => []
+				];
+				return $this->respondCreated($response);
+			}
+		} else {
+			$response = [
+			'status' => 500,
+			'error' => true,
+			'messages' => 'Login inválido',
+			'data' => []
+			];
+			return $this->respondCreated($response);
+		}
+	}
 
 	public function index() {
 		$model = new FuncionarioModel();

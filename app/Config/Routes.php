@@ -36,6 +36,7 @@ $routes->setAutoRoute(true);
 $routes->resource('cliente');
 
 $routes->resource('funcionario');
+$routes->post('funcionario/login', 'Funcionario::login');
 
 $routes->resource('produto');
 
