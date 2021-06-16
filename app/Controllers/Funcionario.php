@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use CodeIgniter\API\ResponseTrait;
 use App\Models\FuncionarioModel;
+use Exception;
 use Firebase\JWT\JWT;
 
 class Funcionario extends BaseController {
@@ -32,7 +33,10 @@ class Funcionario extends BaseController {
 					"iat" => $iat, // issued at
 					"nbf" => $nbf, //not before in seconds
 					"exp" => $exp, // expire time in seconds
-					"data" => $userdata,
+					"data" => [ 
+						'id' => $userdata['funcionario_id'],
+						'nome_completo' => $userdata['nome_completo']
+					]
 				);
 
 				$token = JWT::encode($payload, $key);
@@ -68,9 +72,22 @@ class Funcionario extends BaseController {
 	}
 
 	public function index() {
-		$model = new FuncionarioModel();
-		$data = $model->findAll();
-		return $this->respond($data);
+
+		try {
+			$token = $this->request->header("Authorization")->getValue();
+			$decoded = JWT::decode($token, $this->getKey(), array("HS256"));
+
+			return $this->respond($decoded);
+
+			if ($decoded) {
+				$model = new FuncionarioModel();
+				$data = $model->findAll();
+				return $this->respond($data);
+			}
+		} catch (Exception $ex) {
+			return $this->failUnauthorized("Acesso negado! Exception: ".$ex);
+		}
+
 	}
 
 	public function show($id = null) {
