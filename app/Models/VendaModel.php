@@ -20,4 +20,13 @@ class VendaModel extends Model
         ->join('cliente', 'cliente.cliente_id = ficha.fk_cliente_id')
         ->join('funcionario', 'funcionario.funcionario_id = ficha.fk_funcionario_id');
     }
+
+    public function getVendaById($id){
+        return $this->select('ficha.*, funcionario.nome_completo as nome_funcionario,
+        funcionario.email as email_funcionario, funcionario.telefone as telefone_funcionario,
+        cliente.nome as nome_cliente, cliente.cpf as cpf_cliente, cliente.telefone as telefone_cliente')
+        ->join('cliente', 'cliente.cliente_id = ficha.fk_cliente_id')
+        ->join('funcionario', 'funcionario.funcionario_id = ficha.fk_funcionario_id')
+        ->where('ficha.ficha_id', $id);
+    }
 }

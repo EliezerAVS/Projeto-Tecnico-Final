@@ -3,6 +3,7 @@
 use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\API\ResponseTrait;
 use App\Models\VendaModel;
+use App\Models\FichaProdutoModel;
  
 class Venda extends ResourceController
 {
@@ -15,14 +16,54 @@ class Venda extends ResourceController
         return $this->respond($data);
     }
  
-    // lista uma venda
+    // lista venda por produto
     public function show($id = null)
     {
         $model = new VendaModel();
-        $data = $model->getWhere(['ficha_id' => $id])->getResult();
+        $allDataVenda = $model->getVendaById($id)->findAll();
+        
+        if($allDataVenda){
+            
+            $model = new FichaProdutoModel();
+            $allDataProduto = $model->getAllProduto($id)->findAll();
 
-        if($data){
-            return $this->respond($data);
+            $resultado = [];
+            
+            foreach ($allDataVenda as $venda){
+                $dados = array();
+
+                $dados['ficha_id'] = $venda['ficha_id'];
+                $dados['preco_total'] = $venda['preco_total'];
+                $dados['data'] = $venda['data'];
+                $dados['funcionario'] = array(
+                    'id' => $venda['fk_funcionario_id'],
+                    'nome' => $venda['nome_funcionario'],
+                    'email' => $venda['email_funcionario'],
+                    'telefone' => $venda['telefone_funcionario']
+                );
+                $dados['cliente'] = array(
+                    'id' => $venda['fk_cliente_id'],
+                    'nome' => $venda['nome_cliente'],
+                    'cpf' => $venda['cpf_cliente'],
+                    'telefone' => $venda['telefone_cliente']
+                );
+                
+                $dados['produto'] = array();
+
+                foreach($allDataProduto as $vendaProduto){
+                    $dados['produto'][] = array(
+                        'nome' => $vendaProduto['nome'],
+                        'descricao' => $vendaProduto['descricao'],
+                        'quantidade' => $vendaProduto['quantidade'],
+                        'preco_unitario' => $vendaProduto['preco_unitario'],
+                        'codigo_de_barras' => $vendaProduto['codigo_de_barras']
+                    );
+                }
+                
+                array_push($resultado, $dados);
+            }
+            
+            return $this->respond($resultado);
         }
         
         return $this->failNotFound('Nenhum dado encontrado com id '.$id);
@@ -105,16 +146,16 @@ class Venda extends ResourceController
             $dados['preco_total'] = $venda['preco_total'];
             $dados['data'] = $venda['data'];
             $dados['funcionario'] = array(
-                'id'=>$venda['fk_funcionario_id'],
-                'nome'=>$venda['nome_funcionario'],
-                'email'=>$venda['email_funcionario'],
-                'telefone'=>$venda['telefone_funcionario']
+                'id' => $venda['fk_funcionario_id'],
+                'nome' => $venda['nome_funcionario'],
+                'email' => $venda['email_funcionario'],
+                'telefone' => $venda['telefone_funcionario']
             );
             $dados['cliente'] = array(
-                'id'=>$venda['fk_cliente_id'],
-                'nome'=>$venda['nome_cliente'],
-                'cpf'=>$venda['cpf_cliente'],
-                'telefone'=>$venda['telefone_cliente']
+                'id' => $venda['fk_cliente_id'],
+                'nome' => $venda['nome_cliente'],
+                'cpf' => $venda['cpf_cliente'],
+                'telefone' => $venda['telefone_cliente']
             );
             
             array_push($resultado, $dados);
