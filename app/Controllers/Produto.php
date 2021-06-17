@@ -88,24 +88,34 @@ class Produto extends BaseController
     public function delete($id = null)
     {
         if ($this->autenticar() == null) {
-          return $this->failUnauthorized("Acesso Negado!");
+            return $this->failUnauthorized("Acesso Negado!");
         }
 
         $model = new ProdutoModel();
         $data = $model->find($id);
-        
+
         if($data){
-            $model->delete($id);
-            $response = [
-                'status'   => 200,
-                'error'    => null,
-                'messages' => [
-                    'success' => 'Dados removidos'
-                ]
-            ];
+                $retorno = $model->delete($id);
+                if($retorno == false){
+                    $response = [
+                    'status'   => 401,
+                    'error'    => null,
+                    'messages' => [
+                        'failure' => 'Dados não podem ser removidos'
+                    ]
+                ];
+            }else{
+                $response = [
+                    'status'   => 200,
+                    'error'    => null,
+                    'messages' => [
+                        'success' => 'Dados removidos'
+                    ]
+                ];
+            }
             return $this->respondDeleted($response);
         }
-        
-        return $this->failNotFound('Nenhum dado encontrado com id '.$id);
-    }
+
+        return $this->failNotFound('Nenhum dado encontrado com id '.$id);        
+      }
 }

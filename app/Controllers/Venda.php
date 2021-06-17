@@ -59,6 +59,7 @@ class Venda extends BaseController
 
                 foreach($allDataProduto as $vendaProduto){
                     $dados['produto'][] = array(
+                        'id' => $vendaProduto['fk_produto_id'],
                         'nome' => $vendaProduto['nome'],
                         'descricao' => $vendaProduto['descricao'],
                         'quantidade' => $vendaProduto['quantidade'],

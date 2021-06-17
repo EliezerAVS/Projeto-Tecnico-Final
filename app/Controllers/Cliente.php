@@ -84,19 +84,29 @@ class Cliente extends BaseController {
 
 		$model = new ClienteModel();
 		$data = $model->find($id);
-		
+
 		if($data){
-			$model->delete($id);
-			$response = [
-				'status'   => 200,
-				'error'    => null,
-				'messages' => [
-					'success' => 'Dados removidos'
-				]
-			];
+			$retorno = $model->delete($id);
+			if($retorno == false){
+				$response = [
+					'status'   => 401,
+					'error'    => null,
+					'messages' => [
+						'failure' => 'Dados não podem ser removidos'
+					]
+				];
+			}else{
+				$response = [
+					'status'   => 200,
+					'error'    => null,
+					'messages' => [
+						'success' => 'Dados removidos'
+					]
+				];
+			}
 			return $this->respondDeleted($response);
 		}
-		
+
 		return $this->failNotFound('Nenhum dado encontrado com id '.$id);        
 	}
 }
