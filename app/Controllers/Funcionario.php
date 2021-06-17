@@ -25,7 +25,7 @@ class Funcionario extends BaseController {
 
 				$iat = time(); // retorna em timestamp
 				$nbf = $iat + 1;
-				$exp = $iat + 36000;
+				$exp = $iat + 360000;
 
 				$payload = array(
 					"iss" => "api_estoque",
@@ -72,21 +72,13 @@ class Funcionario extends BaseController {
 	}
 
 	public function index() {
-
-		try {
-			$token = $this->request->header("Authorization")->getValue();
-			$decoded = JWT::decode($token, $this->getKey(), array("HS256"));
-
-			return $this->respond($decoded);
-
-			if ($decoded) {
-				$model = new FuncionarioModel();
-				$data = $model->findAll();
-				return $this->respond($data);
-			}
-		} catch (Exception $ex) {
-			return $this->failUnauthorized("Acesso negado! Exception: ".$ex);
+		if ($this->autenticar() == null) {
+			return $this->failUnauthorized("Acesso Negado!");
 		}
+
+		$model = new FuncionarioModel();
+		$data = $model->findAll();
+		return $this->respond($data);
 
 	}
 
