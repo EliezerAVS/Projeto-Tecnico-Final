@@ -4,12 +4,16 @@ use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\API\ResponseTrait;
 use App\Models\ProdutoModel;
  
-class Produto extends ResourceController
+class Produto extends BaseController
 {
     use ResponseTrait;
     // lista todos produtos
     public function index()
     {
+        if ($this->autenticar() == null) {
+          return $this->failUnauthorized("Acesso Negado!");
+        }
+
         $model = new ProdutoModel();
         $data = $model->findAll();
         return $this->respond($data);
@@ -18,6 +22,10 @@ class Produto extends ResourceController
     // lista um produto
     public function show($id = null)
     {
+        if ($this->autenticar() == null) {
+          return $this->failUnauthorized("Acesso Negado!");
+        }
+
         $model = new ProdutoModel();
         $data = $model->getWhere(['produto_id' => $id])->getResult();
 
@@ -31,6 +39,10 @@ class Produto extends ResourceController
     // adiciona um produto
     public function create()
     {
+        if ($this->autenticar() == null) {
+          return $this->failUnauthorized("Acesso Negado!");
+        }
+
         $model = new ProdutoModel();
         $data = $this->request->getJSON();
 
@@ -51,6 +63,10 @@ class Produto extends ResourceController
     // atualiza um produto
     public function update($id = null)
     {
+        if ($this->autenticar() == null) {
+          return $this->failUnauthorized("Acesso Negado!");
+        }
+
         $model = new ProdutoModel();
         $data = $this->request->getJSON();
         
@@ -71,6 +87,10 @@ class Produto extends ResourceController
     // deleta um produto
     public function delete($id = null)
     {
+        if ($this->autenticar() == null) {
+          return $this->failUnauthorized("Acesso Negado!");
+        }
+
         $model = new ProdutoModel();
         $data = $model->find($id);
         

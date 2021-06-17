@@ -4,7 +4,6 @@ namespace App\Controllers;
 
 use CodeIgniter\API\ResponseTrait;
 use App\Models\FuncionarioModel;
-use Exception;
 use Firebase\JWT\JWT;
 
 class Funcionario extends BaseController {
@@ -83,6 +82,10 @@ class Funcionario extends BaseController {
 	}
 
 	public function show($id = null) {
+		if ($this->autenticar() == null) {
+			return $this->failUnauthorized("Acesso Negado!");
+		}
+
 		$model = new FuncionarioModel();
 		$data = $model->getWhere(['funcionario_id' => $id])->getResult();
 
@@ -94,6 +97,10 @@ class Funcionario extends BaseController {
 	}
 
 	public function create() {
+		if ($this->autenticar() == null) {
+			return $this->failUnauthorized("Acesso Negado!");
+		}
+
 		$model = new FuncionarioModel();
 		$data = $this->request->getJSON();
 
@@ -112,6 +119,10 @@ class Funcionario extends BaseController {
 	}
 
 	public function update($id = null) {
+		if ($this->autenticar() == null) {
+			return $this->failUnauthorized("Acesso Negado!");
+		}
+
 		$model = new FuncionarioModel();
 		$data = $this->request->getJSON();
 
@@ -129,8 +140,11 @@ class Funcionario extends BaseController {
 		return $this->fail($model->errors());
 	}
 
-	public function delete($id = null)
-	{
+	public function delete($id = null) {
+		if ($this->autenticar() == null) {
+			return $this->failUnauthorized("Acesso Negado!");
+		}
+
 		$model = new FuncionarioModel();
 		$data = $model->find($id);
 		

@@ -1,16 +1,19 @@
 <?php namespace App\Controllers;
  
-use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\API\ResponseTrait;
 use App\Models\VendaModel;
 use App\Models\FichaProdutoModel;
  
-class Venda extends ResourceController
+class Venda extends BaseController
 {
     use ResponseTrait;
     // lista todas vendas
     public function index()
     {
+        if ($this->autenticar() == null) {
+          return $this->failUnauthorized("Acesso Negado!");
+        }
+
         $model = new VendaModel();
         $data = $model->findAll();
         return $this->respond($data);
@@ -19,6 +22,10 @@ class Venda extends ResourceController
     // lista venda por produto
     public function show($id = null)
     {
+        if ($this->autenticar() == null) {
+          return $this->failUnauthorized("Acesso Negado!");
+        }
+
         $model = new VendaModel();
         $allDataVenda = $model->getVendaById($id)->findAll();
         
@@ -72,6 +79,10 @@ class Venda extends ResourceController
     // adiciona uma venda
     public function create()
     {
+        if ($this->autenticar() == null) {
+          return $this->failUnauthorized("Acesso Negado!");
+        }
+
         $model = new VendaModel();
         $data = $this->request->getJSON();
 
@@ -92,6 +103,10 @@ class Venda extends ResourceController
     // atualiza uma venda
     public function update($id = null)
     {
+        if ($this->autenticar() == null) {
+          return $this->failUnauthorized("Acesso Negado!");
+        }
+
         $model = new VendaModel();
         $data = $this->request->getJSON();
         
@@ -112,6 +127,10 @@ class Venda extends ResourceController
     // deleta uma venda
     public function delete($id = null)
     {
+        if ($this->autenticar() == null) {
+          return $this->failUnauthorized("Acesso Negado!");
+        }
+
         $model = new VendaModel();
         $data = $model->find($id);
         
@@ -132,6 +151,10 @@ class Venda extends ResourceController
 
     // lista todas vendas completas
     public function venda(){
+
+        if ($this->autenticar() == null) {
+          return $this->failUnauthorized("Acesso Negado!");
+        }
 
         $model = new VendaModel();
         

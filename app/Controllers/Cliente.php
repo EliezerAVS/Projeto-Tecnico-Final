@@ -2,20 +2,27 @@
 
 namespace App\Controllers;
 
-use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\API\ResponseTrait;
 use App\Models\ClienteModel;
 
-class Cliente extends ResourceController {
+class Cliente extends BaseController {
 	use ResponseTrait; 
 
 	public function index() {
+		if ($this->autenticar() == null) {
+			return $this->failUnauthorized("Acesso Negado!");
+		}
+
 		$model = new ClienteModel();
 		$data = $model->findAll();
 		return $this->respond($data);
 	}
 
 	public function show($id = null) {
+		if ($this->autenticar() == null) {
+			return $this->failUnauthorized("Acesso Negado!");
+		}
+
 		$model = new ClienteModel();
 		$data = $model->getWhere(['cliente_id' => $id])->getResult();
 
@@ -27,6 +34,10 @@ class Cliente extends ResourceController {
 	}
 
 	public function create() {
+		if ($this->autenticar() == null) {
+			return $this->failUnauthorized("Acesso Negado!");
+		}
+
 		$model = new ClienteModel();
 		$data = $this->request->getJSON();
 
@@ -45,6 +56,10 @@ class Cliente extends ResourceController {
 	}
 
 	public function update($id = null) {
+		if ($this->autenticar() == null) {
+			return $this->failUnauthorized("Acesso Negado!");
+		}
+
 		$model = new ClienteModel();
 		$data = $this->request->getJSON();
 
@@ -62,8 +77,11 @@ class Cliente extends ResourceController {
 		return $this->fail($model->errors());
 	}
 
-	public function delete($id = null)
-	{
+	public function delete($id = null) {
+		if ($this->autenticar() == null) {
+			return $this->failUnauthorized("Acesso Negado!");
+		}
+
 		$model = new ClienteModel();
 		$data = $model->find($id);
 		
