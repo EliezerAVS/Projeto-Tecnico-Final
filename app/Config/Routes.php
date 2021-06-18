@@ -42,6 +42,8 @@ $routes->resource('produto');
 
 $routes->resource('venda', ['placeholder' => '(:num)']);
 $routes->get('venda/venda', 'Venda::venda');
+$routes->post('venda/produto', 'Venda::createProduto');
+$routes->get('venda/preco/(:segment)', 'Venda::updatePrecoTotal/$1');
 
 /*
  * --------------------------------------------------------------------

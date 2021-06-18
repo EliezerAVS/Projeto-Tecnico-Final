@@ -3,6 +3,7 @@
 use CodeIgniter\API\ResponseTrait;
 use App\Models\VendaModel;
 use App\Models\FichaProdutoModel;
+use App\Helpers\VendaHelper;
  
 class Venda extends BaseController
 {
@@ -186,5 +187,51 @@ class Venda extends BaseController
         }
         
         return $this->respond($resultado);
+    }
+
+    public function createProduto() {
+        if ($this->autenticar() == null) {
+          return $this->failUnauthorized("Acesso Negado!");
+        }
+
+        $model = new FichaProdutoModel();
+        $data = $this->request->getJSON();
+
+        if($model->insert($data)){
+            return $this->respond("Chegou aqui");
+            if ($this->updatePrecoTotal($data->fk_ficha_id) == True) {
+                $response = [
+                    'status'   => 201,
+                    'error'    => null,
+                    'messages' => [
+                        'success' => 'Dados salvos'
+                    ]
+                ];
+                return $this->respondCreated($response);
+            } 
+            return $this->fail("Erro ao atualizar preço da ficha");
+        }
+
+        return $this->fail($model->errors());
+    }
+
+    public function updatePrecoTotal($id = null) {
+        $model = new FichaProdutoModel();
+        $produtos = $model->getAllProduto(1)->findAll();
+
+        if ($produtos != null) {
+            $calc = new VendaHelper();
+            $precoTotal = $calc->calcPrecoTotal($produtos);
+
+            $modelVenda = new VendaModel();
+            if ($modelVenda->update($id, [ 'preco_total' => $precoTotal ]) ) {
+                return True;
+            } else {
+                return False;
+            }
+        } 
+
+        return False;
+
     }
 }
