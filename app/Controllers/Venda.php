@@ -197,8 +197,9 @@ class Venda extends BaseController
         $model = new FichaProdutoModel();
         $data = $this->request->getJSON();
 
-        if($model->insert($data)){
-            return $this->respond("Chegou aqui");
+        $resposta = $model->insert($data);
+
+        if($resposta === 0){
             if ($this->updatePrecoTotal($data->fk_ficha_id) == True) {
                 $response = [
                     'status'   => 201,
@@ -217,7 +218,7 @@ class Venda extends BaseController
 
     public function updatePrecoTotal($id = null) {
         $model = new FichaProdutoModel();
-        $produtos = $model->getAllProduto(1)->findAll();
+        $produtos = $model->getAllProduto($id)->findAll();
 
         if ($produtos != null) {
             $calc = new VendaHelper();
@@ -232,6 +233,5 @@ class Venda extends BaseController
         } 
 
         return False;
-
     }
 }

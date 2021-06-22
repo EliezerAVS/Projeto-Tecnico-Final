@@ -5,8 +5,8 @@ use CodeIgniter\Model;
 class FichaProdutoModel extends Model
 {
     protected $table = 'ficha_produto';
-    protected $primaryKey = 'fk_produto_id, fk_ficha_id';
-    protected $allowedFields = ['fk_produto_id','fk_ficha_id','quantidade','preco_unitario'];
+    protected $allowedFields = ['fk_ficha_id', 'fk_produto_id',
+        'quantidade','preco_unitario'];
     protected $validationRules    = [
         'fk_produto_id'     => 'required|integer',
         'fk_ficha_id'       => 'required|integer',
