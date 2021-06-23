@@ -216,6 +216,41 @@ class Venda extends BaseController
         return $this->fail($model->errors());
     }
 
+    public function deleteProduto($ficha_id = null, $produto_id = null) {
+        if ($this->autenticar() == null) {
+          return $this->failUnauthorized("Acesso Negado!");
+        }
+
+        $model = new FichaProdutoModel();
+        $data = $model->where('fk_ficha_id', $ficha_id)
+                      ->where('fk_produto_id', $produto_id)
+                      ->findAll();
+
+        if($data){
+
+            $resposta = $model->where('fk_ficha_id', $ficha_id)
+                              ->where('fk_produto_id', $produto_id)
+                              ->delete();
+            if ($resposta == true &&
+                $this->updatePrecoTotal($ficha_id) == True){
+
+                $response = [
+                    'status'   => 200,
+                    'error'    => null,
+                    'messages' => [
+                        'success' => 'Dados removidos'
+                    ]
+                ];
+                return $this->respondDeleted($response);
+            } else {
+                return $this->fail("Erro ao excluir tentar excluir produto");
+            }
+
+        }
+        
+        return $this->failNotFound('Nenhum dado encontrado');
+    }
+
     public function updatePrecoTotal($id = null) {
         $model = new FichaProdutoModel();
         $produtos = $model->getAllProduto($id)->findAll();
